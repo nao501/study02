@@ -10,6 +10,7 @@ driver.get('https://google.com')
 import os
 from selenium.webdriver import Chrome, ChromeOptions
 import time
+import csv
 import pandas as pd
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -63,27 +64,39 @@ def main():
     # 検索ボタンクリック
     driver.find_element_by_class_name("topSearch__button").click()
 
-    # ページ終了まで繰り返し取得
+    # ページ終了まで繰り返し取得 iconFont--arrowLeft
     exp_name_list1 = []
     exp_name_list2 = []
     exp_name_list3 = []
     # 検索結果の一番上の会社名を取得
-    name_list1 = driver.find_elements_by_class_name("cassetteRecruit__name")
-    name_list2 = driver.find_elements_by_class_name("cassetteRecruitRecommend__name")
-    name_list3 = driver.find_elements_by_class_name("tableCondition__body")
-    for (name1,name2,name3) in zip(name_list1,name_list2,name_list3):
+    while True:
+        name_list1 = driver.find_elements_by_class_name("cassetteRecruit__name")
+        name_list2 = driver.find_elements_by_class_name("tableCondition__head")
+        name_list3 = driver.find_elements_by_class_name("tableCondition__body")
+        try:
+            next_page = driver.find_element_by_class_name("iconFont--arrowLeft")
+            next_page.click()
+            time.sleep(5)
+        except :
+            break
+
+
+
+    for name1 in name_list1:
         exp_name_list1.append(name1.text)
+    for name2 in name_list2:    
         exp_name_list2.append(name2.text)
+    for name3 in name_list3:    
         exp_name_list3.append(name3.text)
-    exp_name_list = zip(exp_name_list1,exp_name_list2,exp_name_list3)
-    print(exp_name_list)
+
+    d ={"name1":exp_name_list1,"name2":exp_name_list2,"name3":exp_name_list3}
+
+    df = pd.DataFrame.from_dict(d, orient='index').T    
+
+    print(df)
 
     
-    
-
-    PASS=r'会社リスト.csv'
-    with open(PASS,mode='w') as f:
-        f.writelines(str(exp_name_list))           
+    df.to_csv('会社リスト.csv',encoding="cp932")        
 
 
 
