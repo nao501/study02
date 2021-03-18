@@ -70,12 +70,13 @@ def main():
     exp_name_list3 = []
     # 検索結果の一番上の会社名を取得
     while True:
-        name_list1 = driver.find_elements_by_class_name("cassetteRecruit__name")
-        name_list2 = driver.find_elements_by_class_name("tableCondition__head")
-        name_list3 = driver.find_elements_by_class_name("tableCondition__body")
+        
         try:
-            next_page = driver.find_element_by_class_name("iconFont--arrowLeft")
-            next_page.click()
+            name_list1 = driver.find_elements_by_class_name("cassetteRecruit__name")
+            name_list2 = driver.find_elements_by_class_name("tableCondition__head")
+            name_list3 = driver.find_elements_by_class_name("tableCondition__body")
+            next_page = driver.find_element_by_xpath("//il[@class=iconFont--arrowLeft/ a href")
+            next_page.get()
             time.sleep(5)
         except :
             break
