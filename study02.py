@@ -68,27 +68,32 @@ def main():
     exp_name_list1 = []
     exp_name_list2 = []
     exp_name_list3 = []
-    # 検索結果の一番上の会社名を取得
-    while True:
+    # 検索結果の一番上の会社名を取得 next_page_html = driver.page_source.encode('utf-8')
+    next_page_url = driver.find_element_by_class_name("iconFont--arrowLeft").get_attribute("/list/kw高収入/pg10/?jobsearchType=14&searchType=18")
+
+    while len(next_page_url) > 0 :
+        driver.get(next_page_url)
+        driver.implicitly_wait(5)
         
-        try:
-            name_list1 = driver.find_elements_by_class_name("cassetteRecruit__name")
-            name_list2 = driver.find_elements_by_class_name("tableCondition__head")
-            name_list3 = driver.find_elements_by_class_name("tableCondition__body")
-            next_page = driver.find_element_by_xpath("//il[@class=iconFont--arrowLeft/ a href")
-            next_page.get()
-            time.sleep(5)
-        except :
-            break
+        name_list1 = driver.find_elements_by_class_name("cassetteRecruit__name")
+        name_list2 = driver.find_elements_by_class_name("tableCondition__head")
+        name_list3 = driver.find_elements_by_class_name("tableCondition__body")
+
+        for name1 in name_list1:
+         exp_name_list1.append(name1.text)
+        for name2 in name_list2:    
+         exp_name_list2.append(name2.text)
+        for name3 in name_list3:    
+         exp_name_list3.append(name3.text)
+
+        next_page_url = driver.find_element_by_class_name("iconFont--arrowLeft").get_attribute("href")
+    else:
+        print("\n\n最後のページの処理が終わりました\n\n")
+            
+           
 
 
-
-    for name1 in name_list1:
-        exp_name_list1.append(name1.text)
-    for name2 in name_list2:    
-        exp_name_list2.append(name2.text)
-    for name3 in name_list3:    
-        exp_name_list3.append(name3.text)
+    
 
     d ={"name1":exp_name_list1,"name2":exp_name_list2,"name3":exp_name_list3}
 
