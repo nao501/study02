@@ -69,10 +69,9 @@ def main():
     exp_name_list2 = []
     exp_name_list3 = []
     # 検索結果の一番上の会社名を取得 next_page_html = driver.page_source.encode('utf-8')
-    next_page_url = driver.find_element_by_class_name("iconFont--arrowLeft").get_attribute("/list/kw高収入/pg10/?jobsearchType=14&searchType=18")
-
+    next_page_url = driver.find_elements_by_class_name("iconFont--arrowLeft")
     while len(next_page_url) > 0 :
-        driver.get(next_page_url)
+        
         driver.implicitly_wait(5)
         
         name_list1 = driver.find_elements_by_class_name("cassetteRecruit__name")
@@ -87,6 +86,7 @@ def main():
          exp_name_list3.append(name3.text)
 
         next_page_url = driver.find_element_by_class_name("iconFont--arrowLeft").get_attribute("href")
+        driver.get(next_page_url)
     else:
         print("\n\n最後のページの処理が終わりました\n\n")
             
