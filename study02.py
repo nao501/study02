@@ -73,7 +73,7 @@ def main():
     next_page_elm = driver.find_element_by_class_name("iconFont--arrowLeft")
     next_page_url=next_page_elm.get_attribute("href")
     time.sleep(5)
-    while len(next_page_url) > 0 :
+    while len(next_page_url) < 2 :
         
         
         
@@ -89,7 +89,7 @@ def main():
          exp_name_list3.append(name3.text)
         
 
-        driver.implicitly_wait(5)
+        driver.implicitly_wait(10)
         next_page_elm = driver.find_element_by_class_name("iconFont--arrowLeft")
         next_page_elm.get_attribute("href")
         driver.get(next_page_url)
