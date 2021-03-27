@@ -69,10 +69,13 @@ def main():
     exp_name_list2 = []
     exp_name_list3 = []
     # 検索結果の一番上の会社名を取得 next_page_html = driver.page_source.encode('utf-8')
-    next_page_url = driver.find_elements_by_class_name("iconFont--arrowLeft")
+    driver.implicitly_wait(5)
+    next_page_elm = driver.find_element_by_class_name("iconFont--arrowLeft")
+    next_page_url=next_page_elm.get_attribute("href")
+    time.sleep(5)
     while len(next_page_url) > 0 :
         
-        driver.implicitly_wait(5)
+        
         
         name_list1 = driver.find_elements_by_class_name("cassetteRecruit__name")
         name_list2 = driver.find_elements_by_class_name("tableCondition__head")
@@ -84,17 +87,15 @@ def main():
          exp_name_list2.append(name2.text)
         for name3 in name_list3:    
          exp_name_list3.append(name3.text)
+        
 
-        next_page_url = driver.find_element_by_class_name("iconFont--arrowLeft").get_attribute("href")
+        driver.implicitly_wait(5)
+        next_page_elm = driver.find_element_by_class_name("iconFont--arrowLeft")
+        next_page_elm.get_attribute("href")
         driver.get(next_page_url)
     else:
         print("\n\n最後のページの処理が終わりました\n\n")
             
-           
-
-
-    
-
     d ={"name1":exp_name_list1,"name2":exp_name_list2,"name3":exp_name_list3}
 
     df = pd.DataFrame.from_dict(d, orient='index').T    
