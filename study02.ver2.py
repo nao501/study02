@@ -1,19 +1,6 @@
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-options = webdriver.ChromeOptions()
-options.add_argument('--headless')
-driver = webdriver.Chrome(ChromeDriverManager().install(),options = options)
-driver.get('https://google.com')
-
-import os
-from selenium.webdriver import Chrome, ChromeOptions
-import time
-import csv
-import pandas as pd
-from webdriver_manager.chrome import ChromeDriverManager
+# ログを出力用
 import logging
 from logging import getLogger,StreamHandler,Formatter
-
 logger = getLogger("information")
 logger.setLevel(logging.DEBUG)
 stream_handler= StreamHandler()
@@ -21,6 +8,24 @@ stream_handler.setLevel(logging.DEBUG)
 handler_format = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 stream_handler.setFormatter(handler_format)
 logger.addHandler(stream_handler)
+
+#ChromeDriverのバージョン更新
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+driver = webdriver.Chrome(ChromeDriverManager().install(),options = options)
+driver.get('https://google.com')
+logger.info("ChromeDriverの更新を行います。")
+
+
+import os
+from selenium.webdriver import Chrome, ChromeOptions
+import time
+import csv
+import pandas as pd
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 # Chromeを起動する関数
 def set_driver(driver_path, headless_flg):
@@ -38,6 +43,7 @@ def set_driver(driver_path, headless_flg):
     options.add_argument('--incognito')          # シークレットモードの設定を付与
     # ChromeのWebDriverオブジェクトを作成する。
     return Chrome(ChromeDriverManager().install(), options=options)
+    
 # main処理
 def main():
     search_keyword = input('キーワードを入力してください：')
@@ -86,7 +92,7 @@ def main():
          exp_name_list3.append(name3.text)
         driver.implicitly_wait(10)
         #ログの出力
-        logger.info((str(count) + 'ページ目のデータを取得しました\n'+'次のページへ移動します'))
+        logger.info((str(count) + 'ページ目のデータを取得しました。次のページへ移動します'))
 
         try:
             
@@ -95,10 +101,9 @@ def main():
             url = next_page_elm.get_attribute("href")
             driver.get(url)
             
-
         except:
             #ログの出力
-            logger.info("\n\n最後のページの処理が終わりました\n\n")
+            logger.info("最後のページの処理が終わりました")
             break
 
     d ={"name1":exp_name_list1,"name2":exp_name_list2,"name3":exp_name_list3}
