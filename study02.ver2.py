@@ -12,8 +12,15 @@ import csv
 import pandas as pd
 from webdriver_manager.chrome import ChromeDriverManager
 import logging
+from logging import getLogger,StreamHandler,Formatter
 
-
+logger = getLogger("information")
+logger.setLevel(logging.DEBUG)
+stream_handler= StreamHandler()
+stream_handler.setLevel(logging.DEBUG)
+handler_format = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+stream_handler.setFormatter(handler_format)
+logger.addHandler(stream_handler)
 
 # Chromeを起動する関数
 def set_driver(driver_path, headless_flg):
@@ -40,6 +47,7 @@ def main():
     elif os.name == 'posix': #Mac
         driver = set_driver("chromedriver", False)
     # Webサイトを開く
+    logger.info("マイナビHPを開きます")
     driver.get("https://tenshoku.mynavi.jp/")
     time.sleep(5)
     try:
@@ -56,23 +64,6 @@ def main():
     # 検索ボタンクリック
     driver.find_element_by_class_name("topSearch__button").click()
     
-    #ログの出力
-
-    formatter = '%(asctime)s[%(filename)s:%(lineno)d　%(levelname)s]'
-    logging.basicConfig(filename='debug.py',level = logging.DEBUG,format=formatter)
-    logging.critical('クリティカル')
-    logging.error('エラー')
-    logging.warning('警告')
-    logging.debug(('デバッグ'))
-    logging.info('%s %s', 'test', 'test')
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-
-    log_file = logging.FileHandler('debug.py')
-    logger.addHandler(log_file)
-
-    logger.debug('debugメッセージ')
-
     # 取得したデータを収納するリスト
     exp_name_list1 = []
     exp_name_list2 = []
@@ -81,8 +72,9 @@ def main():
 
     #ページカウント用
     count = 1
-    
+    logger.info(search_keyword+ 'の検索結果を取得します')
     while True : #無限ループにしてページ切り替え部分でbreak判定する
+        
         name_list1 = driver.find_elements_by_class_name("cassetteRecruit__name")
         name_list2 = driver.find_elements_by_css_selector(".cassetteRecruit .tableCondition tr:nth-child(1) .tableCondition__head") # 広告が混じらないように.cassettreRecruitを付与する
         name_list3 = driver.find_elements_by_css_selector(".cassetteRecruit .tableCondition tr:nth-child(1) .tableCondition__body")
@@ -93,20 +85,27 @@ def main():
         for name3 in name_list3:    
          exp_name_list3.append(name3.text)
         driver.implicitly_wait(10)
-        print(str(count) + 'ページ目のデータを取得しました')
-        
+        #ログの出力
+        logger.info((str(count) + 'ページ目のデータを取得しました\n'+'次のページへ移動します'))
+
         try:
+            
             count += 1
             next_page_elm = driver.find_element_by_class_name("iconFont--arrowLeft")
             url = next_page_elm.get_attribute("href")
             driver.get(url)
+            
+
         except:
-            print("\n\n最後のページの処理が終わりました\n\n")
+            #ログの出力
+            logger.info("\n\n最後のページの処理が終わりました\n\n")
             break
 
     d ={"name1":exp_name_list1,"name2":exp_name_list2,"name3":exp_name_list3}
     df = pd.DataFrame(d)
-    df.to_csv('会社リスト.csv',encoding="utf-8_sig") #utf8-sigの方がExcelで開けて汎用的
+    df.to_csv('会社リスト.csv',encoding="utf-8_sig")  #utf8-sigの方がExcelで開けて汎用的
+    logger.info("\n取得した"+search_keyword+"の会社リストを\n会社リスト.csvに保存しました。\n")
+   
 # 直接起動された場合はmain()を起動(モジュールとして呼び出された場合は起動しないようにするため)
 if __name__ == "__main__":
      main()
